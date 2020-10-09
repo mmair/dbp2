@@ -4,6 +4,7 @@ import at.campus02.dbp2.jpa.StudentDao;
 import at.campus02.dbp2.jpa.StudentDaoImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -11,11 +12,47 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class StudentDaoSpec {
 
+    private EntityManagerFactory factory;
+    private EntityManager manager;
+    private StudentDao dao;
+
+    private Student prepareStudent(
+            String firstname,
+            String lastname,
+            Gender gender,
+            String birthdayString
+    ) {
+        Student student = new Student();
+        student.setFirstName(firstname);
+        student.setLastName(lastname);
+        student.setGender(gender);
+        if (birthdayString != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            student.setBirthday(LocalDate.parse(birthdayString, formatter));
+        }
+        return student;
+    }
+
+    private void create(Student student) {
+        manager.getTransaction().begin();
+        manager.persist(student);
+        manager.getTransaction().commit();
+    }
+
+    @Before
+    public void setUp() {
+        factory = Persistence.createEntityManagerFactory("nameOfJpaPersistenceUnit");
+        manager = factory.createEntityManager();
+        dao = new StudentDaoImpl(factory);
+    }
 
     @Test
     public void ensureThatToUpperCaseResultsInAllUppercaseLetters() {
@@ -31,10 +68,6 @@ public class StudentDaoSpec {
 
     @Test
     public void createNullAsStudentReturnsFalse() {
-        // given
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("nameOfJpaPersistenceUnit");
-        StudentDao dao = new StudentDaoImpl(factory);
-
         // when
         boolean result = dao.create(null);
 
@@ -45,13 +78,7 @@ public class StudentDaoSpec {
     @Test
     public void createPersistsStudentInDatabaseAndReturnsTrue() {
         // given
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("nameOfJpaPersistenceUnit");
-
-        Student student = new Student();
-        student.setLastName("lastname");
-        student.setFirstName("firstname");
-        student.setGender(Gender.FEMALE);
-        StudentDao dao = new StudentDaoImpl(factory);
+        Student student = prepareStudent("firstname", "lastname", Gender.FEMALE, null);
 
         // when
         boolean result = dao.create(student);
@@ -59,7 +86,6 @@ public class StudentDaoSpec {
         // then
         assertThat(result, is(true));
         // überprüfen, ob der Student in der Datenbank existiert.
-        EntityManager manager = factory.createEntityManager();
         Student fromDB = manager.find(Student.class, student.getId());
         assertThat(fromDB, is(student));
     }
@@ -67,26 +93,14 @@ public class StudentDaoSpec {
     @Test
     public void createAlreadyExistingStudentReturnsFalse() {
         // given
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("nameOfJpaPersistenceUnit");
-
-        Student student = new Student();
-        student.setLastName("lastname");
-        student.setFirstName("firstname");
-        student.setGender(Gender.FEMALE);
-
-        EntityManager manager = factory.createEntityManager();
-        manager.getTransaction().begin();
-        manager.persist(student);
-        manager.getTransaction().commit();
-
-        StudentDao dao = new StudentDaoImpl(factory);
+        Student student = prepareStudent("firstname", "lastname", Gender.FEMALE, "13.05.1978");
+        create(student);
 
         // when
         boolean result = dao.create(student);
 
         // then
         assertThat(result, is(false));
-
     }
 
 
