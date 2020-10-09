@@ -24,6 +24,7 @@ public class StudentDaoSpec {
     private EntityManager manager;
     private StudentDao dao;
 
+    // <editor-fold desc="Hilfsfunktionen">
     private Student prepareStudent(
             String firstname,
             String lastname,
@@ -53,6 +54,7 @@ public class StudentDaoSpec {
         manager = factory.createEntityManager();
         dao = new StudentDaoImpl(factory);
     }
+    // </editor-fold>
 
     @Test
     public void ensureThatToUpperCaseResultsInAllUppercaseLetters() {
@@ -65,6 +67,8 @@ public class StudentDaoSpec {
         // then
         assertThat(result, is("STRING"));
     }
+
+    // <editor-fold desc="CREATE">
 
     @Test
     public void createNullAsStudentReturnsFalse() {
@@ -102,6 +106,9 @@ public class StudentDaoSpec {
         // then
         assertThat(result, is(false));
     }
+    // </editor-fold>
+
+    // <editor-fold desc="FIND">
 
     @Test
     public void findStudentReturnsEntityFromDatabase() {
@@ -133,6 +140,10 @@ public class StudentDaoSpec {
         // expect
         assertThat(dao.find(4711), is(nullValue()));
     }
+
+    // </editor-fold>
+
+    // <editor-fold desc="UPDATE">
 
     @Test
     public void updateStudentChangesValuesInDatabase() {
@@ -174,6 +185,9 @@ public class StudentDaoSpec {
         // then
         assertThat(result, is(nullValue()));
     }
+    // </editor-fold>
+
+    // <editor-fold desc="DELETE">
 
     @Test
     public void deleteStudentRemovesEntityFromDatabase() {
@@ -197,6 +211,8 @@ public class StudentDaoSpec {
         dao.delete(null);
         dao.delete(prepareStudent("firstname", "lastname", null, null));
     }
+
+    // </editor-fold>
 
 
 
