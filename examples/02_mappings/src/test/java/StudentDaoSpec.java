@@ -103,9 +103,36 @@ public class StudentDaoSpec {
         assertThat(result, is(false));
     }
 
+    @Test
+    public void findStudentReturnsEntityFromDatabase() {
+        // given
+        Student student = prepareStudent("firstname", "lastname", Gender.FEMALE, "13.05.1978");
+        create(student);
 
+        // when
 
+        // der Student, den wir vom DAO bekommen....
+        Student result = dao.find(student.getId());
+        // ... und der Student, den wir im Test aus der DB lesen...
+        Student fromDB = manager.find(Student.class, student.getId());
 
+        // then
+
+        // ... sollen die gleichen sein
+        assertThat(result, is(fromDB));
+    }
+
+    @Test
+    public void findStudentWithNullAsIdReturnsNull() {
+        // expect
+        assertThat(dao.find(null), is(nullValue()));
+    }
+
+    @Test
+    public void findStudentWithNotExistingIdReturnsNull() {
+        // expect
+        assertThat(dao.find(4711), is(nullValue()));
+    }
 
 
 

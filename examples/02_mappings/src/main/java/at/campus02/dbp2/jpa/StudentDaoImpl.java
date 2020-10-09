@@ -39,7 +39,9 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public Student find(Integer id) {
-        return null;
+        if (id == null)
+            return null;
+        return manager.find(Student.class, id);
     }
 
     @Override
