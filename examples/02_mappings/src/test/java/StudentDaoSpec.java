@@ -3,10 +3,7 @@ import at.campus02.dbp2.jpa.Student;
 import at.campus02.dbp2.jpa.StudentDao;
 import at.campus02.dbp2.jpa.StudentDaoImpl;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,6 +11,7 @@ import javax.persistence.Persistence;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -53,6 +51,17 @@ public class StudentDaoSpec {
         factory = Persistence.createEntityManagerFactory("nameOfJpaPersistenceUnit");
         manager = factory.createEntityManager();
         dao = new StudentDaoImpl(factory);
+    }
+
+    @After
+    public void tearDown() {
+        dao.close();
+        if (manager.isOpen()) {
+            manager.close();
+        }
+        if (factory.isOpen()) {
+            factory.close();
+        }
     }
     // </editor-fold>
 
@@ -213,6 +222,32 @@ public class StudentDaoSpec {
     }
 
     // </editor-fold>
+
+    // <editor-fold description="QUERIES">
+
+    @Test
+    public void findAllReturnsAllEntitiesFromDatabase() {
+        // given
+        Student student1 = prepareStudent("firstname", "lastname", Gender.FEMALE, "13.05.1978");
+        Student student2 = prepareStudent("firstname2", "lastname2", Gender.MALE, "13.05.1988");
+        Student student3 = prepareStudent("firstname2", "lastname2", Gender.FEMALE, "13.05.1998");
+
+        create(student1);
+        create(student2);
+        create(student3);
+
+        manager.clear();
+
+        // when
+        List<Student> result = dao.findAll();
+
+        // then
+        assertThat(result.size(), is(3));
+        assertThat(result, hasItems(student1, student2, student3));
+    }
+
+    // </editor-fold>
+
 
 
 
