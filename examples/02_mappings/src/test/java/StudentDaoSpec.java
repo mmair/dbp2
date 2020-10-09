@@ -134,9 +134,46 @@ public class StudentDaoSpec {
         assertThat(dao.find(4711), is(nullValue()));
     }
 
+    @Test
+    public void updateStudentChangesValuesInDatabase() {
+        // given
+        Student student = prepareStudent("firstname", "lastname", Gender.FEMALE, "13.05.1978");
+        create(student);
 
+        // vorsichtshalber Cache ausleeren, weil wir denselben EntityManager fürs persist und dann find verwenden...
+        manager.clear();
 
+        // when
+        student.setLastName("Married-Now");
+        // geänderter Student vom DAO
+        Student result = dao.update(student);
+        // (hoffentlich) geänderter Student aus der Datenbank
+        Student fromDB = manager.find(Student.class, student.getId());
 
+        // then
+        assertThat(result.getLastName(), is("Married-Now"));
+        assertThat(fromDB.getLastName(), is("Married-Now"));
+        assertThat(result, is(fromDB));
+
+    }
+
+    @Test
+    public void updateNullAsStudentReturnsNull() {
+        // expect
+        assertThat(dao.update(null), is(nullValue()));
+    }
+
+    @Test
+    public void updateNotExistingStudentReturnsNull() {
+        // given
+        Student student = prepareStudent("firstname", "lastname", Gender.FEMALE, "13.05.1978");
+
+        // when
+        Student result = dao.update(student);
+
+        // then
+        assertThat(result, is(nullValue()));
+    }
 
 
 

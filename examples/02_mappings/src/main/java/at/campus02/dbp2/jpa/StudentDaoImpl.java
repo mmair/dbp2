@@ -29,7 +29,13 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public Student update(Student student) {
-        return null;
+        if (student == null || find(student.getId()) == null) {
+            return null;
+        }
+        manager.getTransaction().begin();
+        Student updated = manager.merge(student);
+        manager.getTransaction().commit();
+        return updated;
     }
 
     @Override
