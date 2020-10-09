@@ -64,5 +64,44 @@ public class StudentDaoSpec {
         assertThat(fromDB, is(student));
     }
 
+    @Test
+    public void createAlreadyExistingStudentReturnsFalse() {
+        // given
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("nameOfJpaPersistenceUnit");
+
+        Student student = new Student();
+        student.setLastName("lastname");
+        student.setFirstName("firstname");
+        student.setGender(Gender.FEMALE);
+
+        EntityManager manager = factory.createEntityManager();
+        manager.getTransaction().begin();
+        manager.persist(student);
+        manager.getTransaction().commit();
+
+        StudentDao dao = new StudentDaoImpl(factory);
+
+        // when
+        boolean result = dao.create(student);
+
+        // then
+        assertThat(result, is(false));
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

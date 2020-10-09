@@ -16,8 +16,15 @@ public class StudentDaoImpl implements StudentDao {
     public boolean create(Student student) {
         if (student == null)
             return false;
-        else
-            return true;
+
+        if(student.getId() != null) {
+            return false;
+        }
+
+        manager.getTransaction().begin();
+        manager.persist(student);
+        manager.getTransaction().commit();
+        return true;
     }
 
     @Override
