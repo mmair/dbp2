@@ -40,7 +40,13 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public void delete(Student student) {
-
+        if (student == null || find(student.getId()) == null) {
+            return;
+        }
+        manager.getTransaction().begin();
+        Student merged = manager.merge(student);
+        manager.remove(merged);
+        manager.getTransaction().commit();
     }
 
     @Override

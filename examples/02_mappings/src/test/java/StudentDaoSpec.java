@@ -175,6 +175,33 @@ public class StudentDaoSpec {
         assertThat(result, is(nullValue()));
     }
 
+    @Test
+    public void deleteStudentRemovesEntityFromDatabase() {
+        // given
+        Student student = prepareStudent("firstname", "lastname", Gender.FEMALE, "13.05.1978");
+        create(student);
+        manager.clear();
+
+        // when
+        int id = student.getId();
+        dao.delete(student);
+
+        // then
+        assertThat(dao.find(id), is(nullValue()));
+        assertThat(manager.find(Student.class, id), is(nullValue()));
+    }
+
+    @Test
+    public void deleteNullOrNotExistingStudentDoesNotThrowException() {
+        // expect no exception
+        dao.delete(null);
+        dao.delete(prepareStudent("firstname", "lastname", null, null));
+    }
+
+
+
+
+
 
 
 
