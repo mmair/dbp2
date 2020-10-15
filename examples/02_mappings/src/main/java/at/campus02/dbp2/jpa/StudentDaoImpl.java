@@ -2,6 +2,11 @@ package at.campus02.dbp2.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class StudentDaoImpl implements StudentDao {
@@ -58,26 +63,45 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public List<Student> findAll() {
-        return null;
+        TypedQuery<Student> query = manager.createQuery(
+                "select s from Student s",
+                Student.class);
+        return query.getResultList();
     }
 
     @Override
     public List<Student> findAllByLastname(String lastname) {
-        return null;
+        if (lastname == null)
+            return findAll();
+
+        String queryString = "select s from Student s where upper(s.lastName) = upper(:lastname)";
+        TypedQuery<Student> query = manager.createQuery(queryString, Student.class);
+        query.setParameter("lastname", lastname);
+        return query.getResultList();
     }
 
     @Override
     public List<Student> findAllBornBefore(int year) {
-        return null;
+        LocalDate firstDayOfYear = LocalDate.of(year, Month.JANUARY, 1);
+        String queryString = "select s from Student s where s.birthday < :firstDayOfYear";
+        return manager.createQuery(queryString, Student.class)
+                .setParameter("firstDayOfYear", firstDayOfYear)
+                .getResultList();
     }
 
     @Override
     public List<Student> findAllByGender(Gender gender) {
-        return null;
+        if (gender == null)
+            return Collections.emptyList();
+
+        TypedQuery<Student> query = manager.createNamedQuery("Student.findAllByGender", Student.class);
+        query.setParameter("gender", gender);
+        return query.getResultList();
     }
 
     @Override
     public void close() {
-
+        if (manager != null && manager.isOpen())
+            manager.close();
     }
 }

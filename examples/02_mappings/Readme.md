@@ -53,7 +53,8 @@ Dabei gelten folgende Randbedingungen:
 	* Es werden alle in der Datenbank existierenden Studenten gefunden.
 * **findByLastname**
 	* Es werden alle Studenten mit dem angegebenen Nachnamen gefunden.
-	* Wird ``null``als Parameter übergeben, werden _alle_ Studenten aus der Datenbank zurückgegeben. 
+	* Wird ``null``als Parameter übergeben, werden _alle_ Studenten aus der Datenbank zurückgegeben.
+	* Die Suche soll "case-insensitive" funktionieren. 
 * **findAllByGender**
 	* Es werden alle Studenten mit dem angegebenen Geschlecht gefunden.
 	* Wird ``null`` als Parameter übergeben, wird eine leere Liste zurückgegeben.
