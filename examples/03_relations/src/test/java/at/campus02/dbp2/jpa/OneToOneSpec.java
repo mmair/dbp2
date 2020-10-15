@@ -1,13 +1,19 @@
 package at.campus02.dbp2.jpa;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class OneToOneSpec {
 
@@ -54,6 +60,42 @@ public class OneToOneSpec {
         }
     }
     // </editor-fold>
+
+    @Test
+    public void persistAnimalAndOwnerStoresRelationInDatabase() {
+        // given
+        Animal bunny = new Animal();
+        bunny.setName("Hansi");
+
+        Student owner = prepareStudent("firstname", "lastname", Gender.FEMALE, null);
+
+        bunny.setOwner(owner);
+
+        // when
+        manager.getTransaction().begin();
+//        manager.persist(owner);
+        manager.persist(bunny);
+        manager.getTransaction().commit();
+
+        manager.clear();
+
+        // then
+        Animal bunnyFromDb = manager.find(Animal.class, bunny.getName());
+        assertThat(bunnyFromDb.getOwner(), is(owner));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
