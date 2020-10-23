@@ -1,9 +1,6 @@
 package at.campus02.dbp2.jpa;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Animal {
@@ -13,6 +10,9 @@ public class Animal {
 
     @OneToOne
     private Student owner;
+
+    @ManyToOne
+    private Species species;
 
     public String getName() {
         return name;
@@ -28,5 +28,13 @@ public class Animal {
 
     public void setOwner(Student owner) {
         this.owner = owner;
+    }
+
+    public Species getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(Species species) {
+        this.species = species;
     }
 }
