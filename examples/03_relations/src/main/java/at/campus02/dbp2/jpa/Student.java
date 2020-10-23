@@ -17,7 +17,7 @@ public class Student {
     // enum mit 2 Werten: MALE und FEMALE
     private Gender gender;
 
-    @OneToOne (mappedBy = "owner")
+    @OneToOne (mappedBy = "owner", cascade = CascadeType.ALL)
     private Animal pet;
 
     public Integer getId() {
