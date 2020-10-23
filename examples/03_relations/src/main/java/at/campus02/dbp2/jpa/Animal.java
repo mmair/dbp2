@@ -11,7 +11,7 @@ public class Animal {
     @Id
     private String name;
 
-    @OneToOne (cascade = CascadeType.PERSIST)
+    @OneToOne
     private Student owner;
 
     public String getName() {

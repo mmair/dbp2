@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class OneToOneSpec {
@@ -70,10 +71,13 @@ public class OneToOneSpec {
         Student owner = prepareStudent("firstname", "lastname", Gender.FEMALE, null);
 
         bunny.setOwner(owner);
+        // falls refresh nicht verwendet wird (oder ALLE caches geleert werden),
+        // müssen Referenzen im Speicher verwaltet werden.
+        owner.setPet(bunny);
 
         // when
         manager.getTransaction().begin();
-//        manager.persist(owner);
+        manager.persist(owner);
         manager.persist(bunny);
         manager.getTransaction().commit();
 
@@ -82,6 +86,9 @@ public class OneToOneSpec {
         // then
         Animal bunnyFromDb = manager.find(Animal.class, bunny.getName());
         assertThat(bunnyFromDb.getOwner(), is(owner));
+
+        Student ownerFromDb = manager.find(Student.class, owner.getId());
+        assertThat(ownerFromDb.getPet(), is(notNullValue()));
     }
 
 

@@ -1,10 +1,8 @@
 package at.campus02.dbp2.jpa;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +16,9 @@ public class Student {
     private LocalDate birthday;
     // enum mit 2 Werten: MALE und FEMALE
     private Gender gender;
+
+    @OneToOne (mappedBy = "owner")
+    private Animal pet;
 
     public Integer getId() {
         return id;
@@ -55,6 +56,13 @@ public class Student {
         this.gender = gender;
     }
 
+    public Animal getPet() {
+        return pet;
+    }
+
+    public void setPet(Animal pet) {
+        this.pet = pet;
+    }
 
     @Override
     public boolean equals(Object o) {
