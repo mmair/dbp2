@@ -59,7 +59,7 @@ public class BaseSpecification {
         // Cars...
         car1 = prepareCar(VehicleType.SMALL, graz);
         car2 = prepareCar(VehicleType.FAMILY, graz);
-        car3 = prepareCar(VehicleType.SUV, wien);
+        car3 = prepareCar(VehicleType.FAMILY, wien);
         entityManager.persist(car1);
         entityManager.persist(car2);
         entityManager.persist(car3);
