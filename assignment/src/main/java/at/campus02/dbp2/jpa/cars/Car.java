@@ -1,5 +1,6 @@
 package at.campus02.dbp2.jpa.cars;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +22,10 @@ public class Car {
     }
 
     public void setLocation(String location) {
+    }
+
+    public List<Ride> getRides() {
+        return Collections.emptyList();
     }
 
     @Override
