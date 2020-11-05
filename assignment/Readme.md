@@ -118,3 +118,29 @@ Die Spezifikation (und Überprüfung) der Funktionalität erfolgt über vorgegeb
     * Lassen Sie dann auch den ``IntegrationTest`` laufen und kontrollieren Sie in Ihrer Datenbank, ob die vorhandenen Objekte dem entsprechen, was am Ende von ``IntegrationTest`` als Kommentar beschrieben ist. 
     * Die vorgegebenen Testklassen sollen nicht geändert werden. Wenn Sie zusätzliche Tests schreiben, erstellen Sie dazu eine eigene Testklasse. 
 * Kümmern Sie sich bei der Implementierung auch um die verwendeten Ressourcen (es gibt einen eigenen Test dafür). 
+
+
+### Tipps zur Umsetzung
+
+* Folgende Reihenfolge sollte Ihnen die Umsetzung erleichtern:
+
+    1. Projekt öffnen (``build.gradle``) und die ``TestSuite`` laufen lassen. Zunächst werden alle Tests rot sein, aber Sie wissen, dass das Projekt kompiliert und die Libraries geladen werden. Verwenden Sie auch das JPA-Facet, wenn IntelliJ Sie darauf hinweist, das erleichtert das Schreiben der Queries. 
+    2. ``persistence.xml`` fertigstellen. Am besten ``drop-and-create-tables`` verwenden, damit die Datenbank bei jedem Test neu befüllt wird. 
+    3. Entities fertigstellen (``Car``, ``Ride``, ``Customer``).  
+    4. Implementieren Sie das ``CarSharingDao`` Interface in einer eigenen Klasse im selben Package, erstmal nur die Rümpfe der Methoden (default-Implementierung).
+    5. Stellen Sie die ``CarSharingDaoFactory`` so fertig, dass die Factory-Methode eine Instanz Ihrer Implementierung von ``RoomBookingDao`` zurückgibt.
+    6. Lassen Sie wieder die ``TestSuite`` laufen. Einige der Tests sollten vorerst schon erfolgreich durchlaufen, wenn alle Schritte bisher korrekt umgesetzt wurden. Falls nicht, kontrollieren Sie, ob ``persistence.xml`` passen kann. 
+    7. Beginnen Sie die Tests mit ``CrudSpecification``.
+        * Am einfachsten arbeiten Sie die Tests der Reihe nach ab (wie im File vorhanden). 
+        * Das Verhalten jeder Methode inklusive Randbedingungen ist als javadoc-Kommentar direkt beim ``CarSharingDao`` beschrieben.
+        * Erweitern Sie Ihre Implementierung von ``CarSharingDao`` Schritt für Schritt, bis möglichst alle Unit-Tests erfolgreich durchlaufen. 
+        * Lassen Sie zwischendurch immer wieder mal alle Tests aus ``Crud-Specification`` laufen, um sicherzustellen, dass Änderungen keine bereits implementierte Funktionalität kaputt machen.
+        * Die etwas schwieriger zu erfüllenden Tests sind im Namen mit ``tricky`` markiert, diese können sie auch vorerst weglassen und am Ende umsetzen, wenn die Basisfunktionalität vorhanden ist. 
+    8. Fahren Sie mit ``ReservationSpecification`` fort, bis auch dort möglichst alle Unit-Tests erfolgreich sind. 
+    9. Sollten Sie die ``tricky`` Tests noch nicht umgesetzt haben, versuchen Sie, auch diese noch grün werden zu lassen. 
+    11. Spätestens, wenn Sie mit dem Ergebnis zufrieden sind, lassen Sie auch den ``IntegrationTest`` laufen und kontrollieren Sie den Zustand Ihrer Datenbank, ob er dem entspricht, was als Kommentar am Ende von ``IntegrationTest`` beschrieben ist.  
+
+* Ein paar zusätzliche Bemerkungen noch:
+    * Sie können in JPQL auch ``like``, ``lower`` usw. verwenden. 
+    * Die Relationen in der Datenbank werden von JPA verwaltet, im Speicher müssen Sie sich darum kümmern. Mit zB. einem ``refresh`` (``EntityManager``) lesen Sie aber die Werte aus der Datenbank neu ein. 
+    * ``CascadeType`` für Relationen überlegen. 
