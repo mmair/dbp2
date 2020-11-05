@@ -1,28 +1,39 @@
 package at.campus02.dbp2.jpa.cars;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
 public class Customer {
 
+    @Id
+    private String email;
+    private String lastname;
+    private String firstname;
+
     public String getEmail() {
-        return null;
+        return email;
     }
 
     public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getLastname() {
-        return null;
+        return lastname;
     }
 
     public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getFirstname() {
-        return null;
+        return firstname;
     }
 
     public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
     @Override

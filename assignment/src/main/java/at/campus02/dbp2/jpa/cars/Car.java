@@ -1,26 +1,44 @@
 package at.campus02.dbp2.jpa.cars;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Car {
 
+    @Id @GeneratedValue
+    private Integer id;
+    private VehicleType type;
+    private String location;
+
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ride> rides = new ArrayList<>();
+
     public Integer getId() {
-        return null;
+        return id;
     }
 
     public VehicleType getType() {
-        return null;
+        return type;
     }
 
     public void setType(VehicleType type) {
+        this.type = type;
     }
 
     public String getLocation() {
-        return null;
+        return location;
     }
 
     public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public List<Ride> getRides() {
+        return rides;
     }
 
     @Override

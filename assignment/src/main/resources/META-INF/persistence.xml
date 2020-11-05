@@ -5,6 +5,20 @@
 
     <persistence-unit name="assignment" transaction-type="RESOURCE_LOCAL">
 
+        <class>at.campus02.dbp2.jpa.cars.Customer</class>
+        <class>at.campus02.dbp2.jpa.cars.Car</class>
+        <class>at.campus02.dbp2.jpa.cars.Ride</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.url"
+                      value="jdbc:derby:database;create=true"/>
+            <property name="javax.persistence.jdbc.driver"
+                      value="org.apache.derby.jdbc.EmbeddedDriver"/>
+
+            <property name="eclipselink.ddl-generation"
+                      value="drop-and-create-tables"/>
+        </properties>
+
     </persistence-unit>
 
 </persistence>

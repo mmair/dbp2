@@ -1,25 +1,49 @@
 package at.campus02.dbp2.jpa.cars;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@NamedQuery(name = "Ride.findAvailableRides", query = "select r from Ride r where lower(r.car.location) = lower(:location) and r.customer is null")
+@Entity
 public class Ride {
 
+    @Id @GeneratedValue
+    private Integer id;
+    private LocalDate offerDate;
+
+    @ManyToOne
+    private Car car;
+    @OneToOne
+    private Customer customer;
+
     public Integer getId() {
-        return null;
+        return id;
     }
-    public Car getCar() {
-        return null;
-    }
-    public void setCar(Car car) {}
+
     public LocalDate getOfferDate() {
-        return null;
+        return offerDate;
     }
-    public void setOfferDate(LocalDate offerDate) {}
+
+    public void setOfferDate(LocalDate offerDate) {
+        this.offerDate = offerDate;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
     public Customer getCustomer() {
-        return null;
+        return customer;
     }
-    public void setCustomer(Customer customer) {}
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
     @Override
     public boolean equals(Object o) {
