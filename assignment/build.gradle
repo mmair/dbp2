@@ -1,3 +1,5 @@
+import java.awt.Desktop
+
 plugins {
     id 'java'
 }
@@ -15,3 +17,15 @@ dependencies {
     compile group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.7.4'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.addStringOption("charset", "UTF-8")
+}
+
+task openJavaDocInBrowser {
+    doLast {
+        Desktop.getDesktop().open(new File("${projectDir}/build/docs/javadoc/at/campus02/dbp2/jpa/cars/CarSharingDao.html"))
+    }
+}
+openJavaDocInBrowser.dependsOn javadoc

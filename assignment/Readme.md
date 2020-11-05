@@ -132,7 +132,8 @@ Die Spezifikation (und Überprüfung) der Funktionalität erfolgt über vorgegeb
     6. Lassen Sie wieder die ``TestSuite`` laufen. Einige der Tests sollten vorerst schon erfolgreich durchlaufen, wenn alle Schritte bisher korrekt umgesetzt wurden. Falls nicht, kontrollieren Sie, ob ``persistence.xml`` passen kann. 
     7. Beginnen Sie die Tests mit ``CrudSpecification``.
         * Am einfachsten arbeiten Sie die Tests der Reihe nach ab (wie im File vorhanden). 
-        * Das Verhalten jeder Methode inklusive Randbedingungen ist als javadoc-Kommentar direkt beim ``CarSharingDao`` beschrieben.
+        * Das Verhalten jeder Methode inklusive Randbedingungen ist als javadoc-Kommentar direkt beim ``CarSharingDao`` beschrieben. Für leichtere Lesbarkeit 
+          können Sie sich über den gradle Task ``openJavaDocInBrowser`` eine html-Version erstellen und im Browser öffnen lassen.
         * Erweitern Sie Ihre Implementierung von ``CarSharingDao`` Schritt für Schritt, bis möglichst alle Unit-Tests erfolgreich durchlaufen. 
         * Lassen Sie zwischendurch immer wieder mal alle Tests aus ``Crud-Specification`` laufen, um sicherzustellen, dass Änderungen keine bereits implementierte Funktionalität kaputt machen.
         * Die etwas schwieriger zu erfüllenden Tests sind im Namen mit ``tricky`` markiert, diese können sie auch vorerst weglassen und am Ende umsetzen, wenn die Basisfunktionalität vorhanden ist. 
@@ -144,3 +145,5 @@ Die Spezifikation (und Überprüfung) der Funktionalität erfolgt über vorgegeb
     * Sie können in JPQL auch ``like``, ``lower`` usw. verwenden. 
     * Die Relationen in der Datenbank werden von JPA verwaltet, im Speicher müssen Sie sich darum kümmern. Mit zB. einem ``refresh`` (``EntityManager``) lesen Sie aber die Werte aus der Datenbank neu ein. 
     * ``CascadeType`` für Relationen überlegen. 
+    * Falls bei einer Such-Methode bei unterschiedlichen Parameter-Kombinationen Resultate erwartet werden, die mit einer 
+      einzelnen Query nur schwer umzusetzen sind, können Sie natürlich auch für jeden Fall eine eigene Query absetzen.  
