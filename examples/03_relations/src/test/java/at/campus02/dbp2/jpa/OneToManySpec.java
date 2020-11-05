@@ -10,8 +10,7 @@ import javax.persistence.Persistence;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class OneToManySpec {
@@ -71,6 +70,24 @@ public class OneToManySpec {
         Species mammals = new Species();
         mammals.setName("Mammals");
 
+
+        Animal clownfish = new Animal();
+        clownfish.setName("clownfish");
+        Animal shark = new Animal();
+        shark.setName("shark");
+
+        Species fish = new Species();
+        fish.setName("fish");
+
+        clownfish.setSpecies(fish);
+        shark.setSpecies(fish);
+        fish.getAnimals().add(clownfish);
+        fish.getAnimals().add(shark);
+
+        manager.getTransaction().begin();
+        manager.persist(mammals);
+        manager.getTransaction().commit();
+
         // Referenzen im Speicher verwalten
         bunny.setSpecies(mammals);
         cat.setSpecies(mammals);
@@ -93,6 +110,42 @@ public class OneToManySpec {
         assertThat(bunny.getSpecies().getId(), is(mammalsFromDb.getId()));
         assertThat(cat.getSpecies().getId(), is(mammalsFromDb.getId()));
     }
+
+    @Test
+    public void updateExample() {
+        // given
+        Animal clownfish = new Animal();
+        clownfish.setName("Nemo");
+        Animal squirrel = new Animal();
+        squirrel.setName("Squirrel");
+        Species fish = new Species();
+        fish.setName("Fish");
+
+        // Referenzen verwalten
+        clownfish.setSpecies(fish);
+        // Fehler, den wir dann korrigieren wollen
+        squirrel.setSpecies(fish);
+        fish.getAnimals().add(squirrel);
+        fish.getAnimals().add(clownfish);
+
+        // Speichern
+        manager.getTransaction().begin();
+        manager.persist(fish);
+        manager.getTransaction().commit();
+        manager.clear();
+
+        // when: Fehler korrigieren und gleich Squirrel löschen auch...
+        manager.getTransaction().begin();
+        fish.getAnimals().remove(squirrel);
+        manager.merge(fish);
+        // merge sorgt dafür, dass eine detached Entity wieder "managed" ist
+//        Animal managedSquirrel = manager.merge(squirrel);
+        // Wenn ich squirrel löschen möchte, reicht es nicht!, es nur aus den animals von fish
+        // zu removen....
+//        manager.remove(managedSquirrel);
+        manager.getTransaction().commit();
+    }
+
 
 
 
