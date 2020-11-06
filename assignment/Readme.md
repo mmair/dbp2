@@ -93,7 +93,7 @@ public interface CarSharingDao {
 Für die Erzeugung der tatsächlichen Implementierungen dieser Interfaces ist die folgende Factory vorgegeben:
 
 ``` java
-public class RoomBookingDaoFactory {
+public class CarSharingDaoFactory {
     public CarSharingDaoFactory(EntityManagerFactory factory) {...}
     public CarSharingDao getDao() {...}
 }
