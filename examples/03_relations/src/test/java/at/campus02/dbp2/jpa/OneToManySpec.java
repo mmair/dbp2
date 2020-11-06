@@ -205,4 +205,69 @@ public class OneToManySpec {
         // -> "Nemo" ist aber in der Liste vorhanden
         assertThat(mergedAgainFish.getAnimals().get(0).getName(), is("Nemo"));
     }
+
+    @Test
+    public void orphanRemovalTest() {
+
+        // !!!!
+        // Dieser Testfall funktioniert nur korrekt, wenn orphanRemoval auf true gesetzt ist
+        // !!!!
+
+        // -------------------------------------------------------------------------------------------------------------
+        // given
+        // -------------------------------------------------------------------------------------------------------------
+        Animal clownfish = new Animal();
+        clownfish.setName("Nemo");
+        Animal squirrel = new Animal();
+        squirrel.setName("Squirrel");
+
+        Species fish = new Species();
+        fish.setName("Fish");
+
+        // Referenzen.....
+        fish.getAnimals().add(clownfish);
+        clownfish.setSpecies(fish);
+
+        // Fehler, den wir dann korrigieren wollen
+        fish.getAnimals().add(squirrel);
+        squirrel.setSpecies(fish);
+
+        // speichern
+        manager.getTransaction().begin();
+        manager.persist(fish);
+        manager.getTransaction().commit();
+        manager.clear();
+
+        // -------------------------------------------------------------------------------------------------------------
+        // when
+        // -------------------------------------------------------------------------------------------------------------
+        manager.getTransaction().begin();
+        fish.getAnimals().remove(squirrel);
+        // bei orphanRemoval braucht man zwar das merge,
+        // muss aber dafür die entfernten Relationen nicht mehr händisch löschen.
+        // -> dafür werden solche "Orphans" gelöscht!
+        manager.merge(fish);
+        manager.getTransaction().commit();
+
+        manager.clear();
+        manager.getEntityManagerFactory().getCache().evictAll();
+
+        // -------------------------------------------------------------------------------------------------------------
+        // then:
+        // -------------------------------------------------------------------------------------------------------------
+
+        // -> "Squirrel" sollte wegen orphanRemoval=true nicht mehr in der DB vorhanden sein
+        Animal squirrelAgainFromDb = manager.find(Animal.class, squirrel.getName());
+        assertThat(squirrelAgainFromDb, is(nullValue()));
+
+        // -> Und auch wenn wir das fish-Objekt aus dem Speicher mit der DB abgleichen ("refresh"),
+        //    ist squirrel natürlich nicht mehr in der Liste
+        Species mergedAgainFish = manager.merge(fish);
+        manager.refresh(mergedAgainFish);
+        assertThat(mergedAgainFish.getAnimals().size(), is(1));
+
+        // -> "Nemo" ist aber auch hier in der Liste vorhanden
+        assertThat(mergedAgainFish.getAnimals().get(0).getName(), is("Nemo"));
+    }
+
 }

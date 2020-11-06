@@ -13,7 +13,9 @@ public class Species {
 
     private String name;
 
-    @OneToMany(mappedBy = "species", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    // Achtung: updateExample wird nur grün, wenn orphanRemoval = false ist.
+    // Achtung: orphanRemovelTest wird nur grün, wenn orphanRemoval = true ist.
+    @OneToMany(mappedBy = "species", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Animal> animals = new ArrayList<>();
 
     public Integer getId() {
