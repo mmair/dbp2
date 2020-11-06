@@ -135,11 +135,15 @@ public class OneToManySpec {
         fish.getAnimals().add(squirrel);
         fish.getAnimals().add(clownfish);
 
+        // -> Bild dazu: src/main/resources/update_example_values.png
+
         // Speichern
         manager.getTransaction().begin();
         manager.persist(fish);
         manager.getTransaction().commit();
         manager.clear();
+
+        // -> Bild dazu: src/main/resources/update_example_persist.png
 
         // -------------------------------------------------------------------------------------------------------------
         // when: Fehler korrigieren / UNVOLLSTÄNDIGE VARIANTE
@@ -165,6 +169,9 @@ public class OneToManySpec {
         Species mergedFish = manager.merge(fish);
         manager.refresh(mergedFish);
         assertThat(mergedFish.getAnimals().size(), is(2));
+
+        // -> Bild dazu: src/main/resources/update_example_wrong.png
+
 
         // Damit die Relation auch tatsächlich aufgelöst wird (und nicht nur in java im Speicher),
         // muss man auf dem Animal setSpecies(null) aufrufen.
@@ -204,6 +211,8 @@ public class OneToManySpec {
 
         // -> "Nemo" ist aber in der Liste vorhanden
         assertThat(mergedAgainFish.getAnimals().get(0).getName(), is("Nemo"));
+
+        // -> Bild dazu: src/main/resources/update_example_correct.png
     }
 
     @Test
