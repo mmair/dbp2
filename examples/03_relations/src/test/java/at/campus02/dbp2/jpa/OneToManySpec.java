@@ -113,7 +113,14 @@ public class OneToManySpec {
 
     @Test
     public void updateExample() {
+
+        // !!!!
+        // Dieser Testfall funktioniert nur korrekt, wenn orphanRemoval nicht auf true gesetzt ist (siehe Test unten)
+        // !!!!
+
+        // -------------------------------------------------------------------------------------------------------------
         // given
+        // -------------------------------------------------------------------------------------------------------------
         Animal clownfish = new Animal();
         clownfish.setName("Nemo");
         Animal squirrel = new Animal();
@@ -134,20 +141,68 @@ public class OneToManySpec {
         manager.getTransaction().commit();
         manager.clear();
 
-        // when: Fehler korrigieren und gleich Squirrel löschen auch...
+        // -------------------------------------------------------------------------------------------------------------
+        // when: Fehler korrigieren / UNVOLLSTÄNDIGE VARIANTE
+        // -------------------------------------------------------------------------------------------------------------
         manager.getTransaction().begin();
         fish.getAnimals().remove(squirrel);
         manager.merge(fish);
-        // merge sorgt dafür, dass eine detached Entity wieder "managed" ist
-//        Animal managedSquirrel = manager.merge(squirrel);
-        // Wenn ich squirrel löschen möchte, reicht es nicht!, es nur aus den animals von fish
-        // zu removen....
-//        manager.remove(managedSquirrel);
         manager.getTransaction().commit();
+
+        manager.clear();
+        manager.getEntityManagerFactory().getCache().evictAll();
+
+        // -> "Squirrel" sollte noch in der DB vorhanden sein
+        Animal squirrelFromDb = manager.find(Animal.class, squirrel.getName());
+        assertThat(squirrelFromDb, is(notNullValue()));
+
+        // -> Obwohl wir squirrel aus der Liste der Animals entfernt haben und fish mit der DB angeglichen haben,
+        //    verweist das neu aus der DB gelesene squirrel immer noch auf fish als Species!
+        assertThat(squirrelFromDb.getSpecies().getId(), is(fish.getId()));
+
+        // -> Und auch wenn wir das fish-Objekt aus dem Speicher mit der DB abgleichen ("refresh"),
+        //    ist squirrel wieder in der Liste enthalten
+        Species mergedFish = manager.merge(fish);
+        manager.refresh(mergedFish);
+        assertThat(mergedFish.getAnimals().size(), is(2));
+
+        // Damit die Relation auch tatsächlich aufgelöst wird (und nicht nur in java im Speicher),
+        // muss man auf dem Animal setSpecies(null) aufrufen.
+
+        // -------------------------------------------------------------------------------------------------------------
+        // when: neuer Versuch / KORREKTE VARIANTE
+        // -------------------------------------------------------------------------------------------------------------
+        manager.getTransaction().begin();
+        fish.getAnimals().remove(squirrel);
+        manager.merge(fish);
+        // das ist anders als beim ersten Versuch
+        squirrelFromDb.setSpecies(null);
+        manager.getTransaction().commit();
+
+        manager.clear();
+        // braucht man nicht, aber wir gehen auf Nummer Sicher, damit kein Cache dazwischen sein kann...
+        // -> normalerweise brauchen Sie das nicht verwenden
+        manager.getEntityManagerFactory().getCache().evictAll();
+
+        // -------------------------------------------------------------------------------------------------------------
+        // then:
+        // -------------------------------------------------------------------------------------------------------------
+
+        // -> "Squirrel" sollte noch in der DB vorhanden sein
+        Animal squirrelAgainFromDb = manager.find(Animal.class, squirrel.getName());
+        assertThat(squirrelAgainFromDb, is(notNullValue()));
+
+        // -> Diesmal wurde die Relation auch in der Datenbank aufgelöst, also sollte Squirrel auf keine Species
+        //    mehr zeigen....
+        assertThat(squirrelAgainFromDb.getSpecies(), is(nullValue()));
+
+        // -> Und auch wenn wir das fish-Objekt aus dem Speicher mit der DB abgleichen ("refresh"),
+        //    ist squirrel nicht mehr in der Liste enthalten
+        Species mergedAgainFish = manager.merge(fish);
+        manager.refresh(mergedAgainFish);
+        assertThat(mergedAgainFish.getAnimals().size(), is(1));
+
+        // -> "Nemo" ist aber in der Liste vorhanden
+        assertThat(mergedAgainFish.getAnimals().get(0).getName(), is("Nemo"));
     }
-
-
-
-
-
 }
