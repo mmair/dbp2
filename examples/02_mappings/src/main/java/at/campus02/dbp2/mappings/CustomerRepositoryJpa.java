@@ -95,7 +95,13 @@ public class CustomerRepositoryJpa implements CustomerRepository {
     }
 
     @Override
-    public List<Customer> findAllRegisteredAfter(LocalDate date) {
-        return null;
+    public List<Customer> findAllRegisteredAfter(LocalDate registeredAfter) {
+        TypedQuery<Customer> query = manager.createQuery(
+                "select c from Customer c " +
+                        "where c.registeredSince > :registeredAfter",
+                Customer.class
+        );
+        query.setParameter("registeredAfter", registeredAfter);
+        return query.getResultList();
     }
 }
