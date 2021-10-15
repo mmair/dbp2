@@ -142,4 +142,20 @@ public class CustomerRepositoryQuerySpec {
         assertThat(basic, containsInAnyOrder(customer1, customer4, customer6, customer7));
         assertThat(premium, containsInAnyOrder(customer2, customer3, customer5));
     }
+
+    @Test
+    public void findByAccountTypeNullReturnsEmptyList() {
+        // given
+        setupCommonTestdata();
+
+        // when
+        List<Customer> result = repository.findByAccountType(null);
+
+        // then
+        assertThat(result, is(empty()));
+    }
+
+
+
+
 }
