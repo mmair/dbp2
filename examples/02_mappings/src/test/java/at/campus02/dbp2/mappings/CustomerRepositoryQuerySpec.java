@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomerRepositoryQuerySpec {
 
+    //#region test data and helpers
     private EntityManagerFactory factory;
     private EntityManager manager;
     private CustomerRepository repository;
@@ -107,7 +108,9 @@ public class CustomerRepositoryQuerySpec {
         if (factory.isOpen())
             factory.close();
     }
+    //#endregion
 
+    //#region Query: getAllCustomers
     @Test
     public void getAllCustomersReturnsAllCustomersFromDbSortedByRegistrationDate() {
         // given
@@ -128,7 +131,9 @@ public class CustomerRepositoryQuerySpec {
         // then
         assertThat(sortedCustomers, is(empty()));
     }
+    //#endregion
 
+    //#region Query: findByAccountType
     @Test
     public void findByAccountTypeReturnsMatchingCustomers() {
         // given
@@ -154,6 +159,51 @@ public class CustomerRepositoryQuerySpec {
         // then
         assertThat(result, is(empty()));
     }
+    //#endregion
+
+    //#region Query: findByLastname
+    @Test
+    public void findByLastnameReturnsMatchingCustomers() {
+        // given
+        setupCommonTestdata();
+
+        // when
+        List<Customer> matching = repository.findByLastname("orn");
+
+        // then
+        assertThat(matching, contains(customer4, customer7));
+    }
+
+    @Test
+    public void findByLastnameReturnsCaseInsensitivelyMatchingCustomers() {
+        // given
+        setupCommonTestdata();
+
+        // when
+        List<Customer> matching = repository.findByLastname("eBEr");
+
+        // then
+        assertThat(matching, contains(customer5, customer6));
+    }
+
+    @Test
+    public void findByLastnameWithNullOrEmptyStringReturnsEmptyList() {
+        // given
+        setupCommonTestdata();
+
+        // when
+        List<Customer> matching = repository.findByLastname("");
+
+        // then
+        assertThat(matching, is(empty()));
+
+        // and when
+        matching = repository.findByLastname(null);
+
+        // then
+        assertThat(matching, is(empty()));
+    }
+    //#endregion
 
 
 

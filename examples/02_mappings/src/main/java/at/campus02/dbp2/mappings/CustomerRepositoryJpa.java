@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 public class CustomerRepositoryJpa implements CustomerRepository {
@@ -71,7 +72,15 @@ public class CustomerRepositoryJpa implements CustomerRepository {
 
     @Override
     public List<Customer> findByLastname(String lastnamePart) {
-        return null;
+        if (lastnamePart == null || lastnamePart.isEmpty()) {
+            return Collections.emptyList();
+        }
+        TypedQuery<Customer> query = manager.createNamedQuery(
+                "Customer.findByLastnamePart",
+                Customer.class
+        );
+        query.setParameter("lastnamePart", "%" + lastnamePart + "%");
+        return query.getResultList();
     }
 
     @Override

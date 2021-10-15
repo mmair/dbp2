@@ -1,11 +1,14 @@
 package at.campus02.dbp2.mappings;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
+
+@NamedQuery(
+        name = "Customer.findByLastnamePart",
+        query = "select c from Customer c " +
+                "where lower(c.lastname) like lower(:lastnamePart) " +
+                "order by c.lastname")
 
 @Entity
 public class Customer {
