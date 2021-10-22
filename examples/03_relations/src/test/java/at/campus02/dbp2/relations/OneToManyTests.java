@@ -5,6 +5,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
@@ -117,6 +118,7 @@ public class OneToManyTests {
      *  <img src="https://raw.githubusercontent.com/mmair/dbp2/main/examples/03_relations/src/test/resources/update_example_correct.png" />
      */
     @Test
+    @Disabled("Only works without orphanRemoval - enable after setting orphanRemoval to false")
     public void updateExampleWithCorrectingReferences() {
         // -----------------------------------------------------
         // given
@@ -197,4 +199,47 @@ public class OneToManyTests {
         manager.refresh(mergedFish);
         assertThat(mergedFish.getAnimals().size(), is(1));
     }
+
+    @Test
+    public void orphanRemovalDeletesOrphansFromDatabase() {
+        // given
+        Animal clownfish = new Animal("Nemo");
+        Animal squirrel = new Animal("Squirrel");
+        Species fish = new Species("Fish");
+
+        // Referenzen für DB
+        clownfish.setSpecies(fish);
+        // FEHLER -> den wollen wir dann korrigieren
+        squirrel.setSpecies(fish);
+
+        // Referenzen fürs CASCADE
+        fish.getAnimals().add(clownfish);
+        fish.getAnimals().add(squirrel);
+
+        // Speichern
+        manager.getTransaction().begin();
+        manager.persist(fish);
+        manager.getTransaction().commit();
+
+        manager.clear();
+
+        // when
+        manager.getTransaction().begin();
+        fish.getAnimals().remove(squirrel);
+        manager.merge(fish);
+        manager.getTransaction().commit();
+
+        manager.clear();
+
+        // then
+        Animal squirrelFromDb = manager.find(Animal.class, squirrel.getId());
+        // bei Verwendung von orphanRemoval wird Squirrel aus der DB gelöscht.
+        assertThat(squirrelFromDb, is(nullValue()));
+
+        Species refreshedFish = manager.merge(fish);
+        manager.refresh(refreshedFish);
+
+        assertThat(refreshedFish.getAnimals().size(), is(1));
+    }
+
 }

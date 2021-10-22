@@ -12,7 +12,7 @@ public class Species {
 
     private String name;
 
-    @OneToMany (mappedBy = "species", cascade = CascadeType.ALL)
+    @OneToMany (mappedBy = "species", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Animal> animals = new ArrayList<>();
 
     public Species(String name) {
