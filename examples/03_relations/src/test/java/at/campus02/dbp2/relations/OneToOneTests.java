@@ -1,7 +1,5 @@
-import at.campus02.dbp2.relations.Animal;
-import at.campus02.dbp2.relations.Student;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
+package at.campus02.dbp2.relations;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
