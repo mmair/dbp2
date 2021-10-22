@@ -133,12 +133,16 @@ public class OneToManyTests {
         fish.getAnimals().add(clownfish);
         fish.getAnimals().add(squirrel);
 
+        // -> Bild dazu: update_example_values.png
+
         // Speichern
         manager.getTransaction().begin();
         manager.persist(fish);
         manager.getTransaction().commit();
 
         manager.clear();
+
+        // -> Bild dazu: update_example_persist.png
 
         // -----------------------------------------------------
         // when: Korrekturversuch, zum Scheitern verurteilt...
@@ -147,6 +151,8 @@ public class OneToManyTests {
         manager.merge(fish);
         manager.getTransaction().commit();
         manager.clear();
+
+        // -> Bild dazu: update_example_wrong.png
 
         // -----------------------------------------------------
         // then
@@ -173,6 +179,8 @@ public class OneToManyTests {
         manager.merge(squirrel);
         manager.getTransaction().commit();
         manager.clear();
+
+        // -> Bild dazu: update_example_correct.png
 
         // -----------------------------------------------------
         // then
