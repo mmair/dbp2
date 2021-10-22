@@ -1,8 +1,7 @@
 package at.campus02.dbp2.relations;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Student {
@@ -11,6 +10,9 @@ public class Student {
     private Integer id;
 
     private String name;
+
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    private Animal pet;
 
     // default constructor - im Fall von JPA definieren
     public Student() {
@@ -31,4 +33,24 @@ public class Student {
         this.name = name;
     }
 
+    public Animal getPet() {
+        return pet;
+    }
+
+    public void setPet(Animal pet) {
+        this.pet = pet;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) && Objects.equals(name, student.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }
