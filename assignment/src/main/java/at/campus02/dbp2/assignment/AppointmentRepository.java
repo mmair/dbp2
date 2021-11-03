@@ -81,8 +81,8 @@ public interface AppointmentRepository {
      * Überträgt den aktuellen Zustand eines Providers in die Datenbank.
      * <p>Bedingungen: <ul>
      *   <li> Bei Parameter <code>null</code> passiert nichts und <code>null</code> wird zurückgegeben.
-     *   <li> Hat der übergebene Provider keine ID passiert nichts und <code>null</code> wird zurückgegeben.
-     *   <li> Gibt es keinen Provider mit dieser ID in der Datenbank wird eine <code>IllegalArgumentException</code> geworfen.
+     *   <li> Hat der übergebene Provider keine ID oder gibt es keinen Provider mit dieser ID in der Datenbank
+     *        wird eine <code>IllegalArgumentException</code> geworfen.
      *   <li> Ansonsten wird der Provider in die Datenbank übernommen und zurückgegeben.
      *   <li> Appointments, die nicht mehr zu diesem Provider gehören, werden in der Datenbank ebenfalls gelöscht.
      *   <li> Appointments, die noch nicht in der Datenbank existieren, werden persistiert.
@@ -96,8 +96,8 @@ public interface AppointmentRepository {
      * Löscht den angegebenen Provider aus der Datenbank.
      * <p>Bedingungen: <ul>
      *   <li> Bei Parameter <code>null</code> passiert nichts und <code>false</code> wird zurückgegeben.
-     *   <li> Hat der übergebene Provider keine ID passiert nichts und <code>false</code> wird zurückgegeben.
-     *   <li> Gibt es keinen Provider mit dieser ID in der Datenbank wird eine <code>IllegalArgumentException</code> geworfen.
+     *   <li> Hat der übergebene Provider keine ID oder gibt es keinen Provider mit dieser ID in der Datenbank
+     *        wird eine <code>IllegalArgumentException</code> geworfen.
      *   <li> Ansonsten wird der Provider aus der Datenbank gelöscht und <code>true</code> zurückgegeben.
      *   <li> Appointments, die zu diesem Provider gehörten, werden in der Datenbank ebenfalls gelöscht.
      * </ul>
