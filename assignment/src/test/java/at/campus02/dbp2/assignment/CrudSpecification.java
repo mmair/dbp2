@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CrudTests extends BaseSpecification {
+public class CrudSpecification extends BaseSpecification {
 
     @Test
     public void c01_createCustomerWithNullReturnsFalse() {
