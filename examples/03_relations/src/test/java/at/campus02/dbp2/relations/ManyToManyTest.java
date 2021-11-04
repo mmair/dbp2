@@ -49,12 +49,19 @@ public class ManyToManyTest {
         Country india = new Country("India");
         Country southAfrica = new Country("SouthAfrica");
 
-        // relations
+        // Falls Animal die "Quelle" ist (mappedBy auf Country verwendet),
+        // müssen die Länder in die Liste bei den Animals vorhanden sein,
+        // damit die Relationen geschlossen werden.
+        //
+        // Nicht nötig, falls Country die "Quelle" ist.
+        //
 //        cat.getCountries().addAll(Arrays.asList(austria, india, southAfrica));
 //        elephant.getCountries().addAll(Arrays.asList(india, southAfrica));
 //        tiger.getCountries().add(india);
 
-        // wegen cascade (PERSIST)
+        // wegen cascade (PERSIST) auf Country müssen die Animals jedenfalls
+        // in der Liste bei den Ländern vorhanden sein, damit PERSIST
+        // überhaupt kaskadieren kann.
         austria.getAnimals().add(cat);
         southAfrica.getAnimals().addAll(Arrays.asList(cat, elephant));
         india.getAnimals().addAll(Arrays.asList(cat, elephant, tiger));
