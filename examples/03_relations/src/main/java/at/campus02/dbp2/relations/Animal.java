@@ -1,6 +1,8 @@
 package at.campus02.dbp2.relations;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +18,9 @@ public class Animal {
 
     @ManyToOne
     private Species species;
+
+    @ManyToMany(mappedBy = "animals")
+    private final List<Country> countries = new ArrayList<>();
 
     // default constructor - im Fall von JPA definieren
     public Animal() {
@@ -50,6 +55,10 @@ public class Animal {
 
     public void setSpecies(Species species) {
         this.species = species;
+    }
+
+    public List<Country> getCountries() {
+        return countries;
     }
 
     @Override
